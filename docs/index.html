@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Docs</title>
+    <style>
+      body {
+        margin: 16px auto;
+        max-width: 780px;
+        padding: 0 12px 40px;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 14px;
+        color: #222;
+        background: #e8e8e8;
+        line-height: 1.45;
+      }
+      a { color: #06c; }
+      h1 { font-size: 20px; font-weight: normal; }
+      h2 { font-size: 16px; margin-top: 28px; }
+      ul, ol { padding-left: 22px; }
+      li { margin: 4px 0; }
+      .box {
+        border: 1px solid #aaa;
+        padding: 8px;
+        background: #fff;
+      }
+      .mermaid { background: #fff; padding: 8px; }
+    </style>
+  </head>
+  <body>
+    <h1>Docs</h1>
+    <p>
+      Quick notes for the surveillance prototype - RTSP camera sim, Server A (video),
+      Server B (auth/commands), browser client. Video is MPEG-TS over WebSocket + mpegts.js.
+    </p>
+    <p><a href="/">back to the app</a></p>
+
+    <h2>Architecture</h2>
+    <div class="box">
+      <div class="mermaid">
+flowchart LR
+  subgraph camera [Camera]
+    FF[ffmpeg testsrc2 + clock]
+    MTX[MediaMTX :1111]
+    FF -->|RTSP publish| MTX
+  end
+
+  subgraph serverA [Server A :3001]
+    Ingest[ffmpeg remux]
+    Hub[broadcast gate]
+    VidWS[video WS]
+    Ctrl[TCP :4000]
+    Ingest --> Hub --> VidWS
+    Ctrl --> Hub
+  end
+
+  subgraph serverB [Server B :3000]
+    HTTP[login + static]
+    CmdWS[command WS]
+    Log[commands.log]
+    Bridge[TCP client]
+    HTTP --> CmdWS --> Bridge
+    CmdWS --> Log
+  end
+
+  Browser[browser]
+  MTX -->|RTSP pull| Ingest
+  Bridge -->|JSON| Ctrl
+  Browser -->|JWT| HTTP
+  Browser -->|JWT on WS| VidWS
+      </div>
+    </div>
+
+    <h2>Tech</h2>
+    <ul>
+      <li>Node (ESM) - whole thing is plain JS</li>
+      <li>MediaMTX - owns rtsp://127.0.0.1:1111/camera</li>
+      <li>ffmpeg-static - camera + remux (works on mac/win without installing ffmpeg by hand)</li>
+      <li>MPEG-TS / mpegts.js - browser playback, no plugin, copy remux (no 2nd encode)</li>
+      <li>Express + ws - HTTP + sockets</li>
+      <li>JWT + bcrypt - login / session</li>
+      <li>length-prefixed TCP between A and B (no REST there)</li>
+    </ul>
+    <p>
+      Skipped HLS (too laggy) and WebRTC (more moving parts than I wanted for START/STOP).
+      Transport delay is small; most of what you see is the player buffer.
+    </p>
+
+    <h2>Performance</h2>
+    <p>
+      Localhost, 640x480 @ 30fps. Transport delay is small; most of what you see is the player buffer.
+    </p>
+    <ul>
+      <li>time to first WS byte - a few ms</li>
+      <li>preroll on connect - about 1.5 s</li>
+      <li>camera -> client bytes (clock overlay) - about 1 frame (30-40 ms)</li>
+      <li>what you see on screen - mostly mpegts.js buffer (around 0.15-0.5 s)</li>
+    </ul>
+
+    <h2>Setup</h2>
+    <ol>
+      <li>Node 20+</li>
+      <li>npm install</li>
+      <li>npm start (downloads MediaMTX first time)</li>
+      <li>open <a href="http://127.0.0.1:3000">http://127.0.0.1:3000</a></li>
+      <li>login example: admin / admin123</li>
+    </ol>
+    <p>
+      Also: operator / operator123, viewer / viewer123.
+      Ports: RTSP 1111, B 3000, A 3001, control 4000.
+    </p>
+
+    <h2>Decisions / gotchas</h2>
+    <ul>
+      <li>:1111 - MediaMTX listens; ffmpeg only publishes (sample command assumes an RTSP server is already there).</li>
+      <li>ffmpeg.exe - used ffmpeg-static instead so mac + windows both work.</li>
+      <li>STOP_VIDEO - does not kill ffmpeg. Just stops forwarding chunks. Still read stdout.</li>
+      <li>Auth on video - Server A checks JWT on upgrade. Hiding the URL isn't enough.</li>
+      <li>Bonus A - viewer vs operator on Server B. viewer can't START/STOP.</li>
+      <li>Bonus B - commands encrypted with RSA-OAEP. Public key at GET /crypto/public-key. Plaintext rejected.</li>
+      <li>GET_STATUS - JSON from A, UI prints VIDEO_RUNNING / VIDEO_STOPPED.</li>
+      <li>Reconnect A->B, B->A - B is the TCP client, backoff + replay revoked jtis.</li>
+      <li>Clock on video - testsrc2 has its own timer; drawtext adds wall clock if a font is around.</li>
+      <li>Log HMAC - each commands.log line is chained with HMAC-SHA256. Check with npm run verify-log.</li>
+    </ul>
+
+    <h2>Limitations</h2>
+    <ul>
+      <li>No Bonus C/D (native addon / TPM).</li>
+    </ul>
+
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+      mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+    </script>
+  </body>
+</html>

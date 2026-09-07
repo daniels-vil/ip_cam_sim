@@ -1,0 +1,30 @@
+logLevel: info
+logDestinations: [stdout]
+
+rtsp: true
+rtspAddress: :1111
+rtspTransports: [tcp, udp]
+
+rtmp: false
+hls: false
+webrtc: false
+srt: false
+moq: false
+api: false
+metrics: false
+pprof: false
+playback: false
+
+authMethod: internal
+authInternalUsers:
+  - user: any
+    pass:
+    ips: []
+    permissions:
+      - action: publish
+      - action: read
+      - action: playback
+
+paths:
+  camera:
+    source: publisher

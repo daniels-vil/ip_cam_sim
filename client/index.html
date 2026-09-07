@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="author" content="Daniels Vilcuks" />
+    <!-- DV -->
+    <title>Video surveillance</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div id="login-view">
+      <div class="login-box">
+        <h1>Login</h1>
+        <p class="lede">Accounts are in users.json</p>
+        <form id="login-form">
+          <label for="login">Login</label>
+          <input id="login" name="login" autocomplete="username" required />
+
+          <label for="password">Password</label>
+          <input id="password" name="password" type="password" autocomplete="current-password" required />
+
+          <button type="submit">Login</button>
+          <p id="login-error" class="error" hidden></p>
+        </form>
+      </div>
+    </div>
+
+    <div id="main-view" hidden>
+      <div class="top">
+        <div>
+          <h1>Camera 01</h1>
+          <p class="statusline">
+            <span>user <span id="user-chip" class="chip">-</span></span>
+            <span>role <span id="role-chip" class="chip">-</span></span>
+            <span>video <span id="video-chip" class="chip">-</span></span>
+            <span>cmd <span id="link-chip" class="chip">-</span></span>
+          </p>
+        </div>
+        <a class="docs-link" href="/docs">docs</a>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Live</h2>
+          <div class="meta">
+            <span id="player-state">connecting</span>
+          </div>
+        </div>
+        <div class="stage">
+          <video id="video" muted playsinline></video>
+          <div id="video-overlay" class="overlay">waiting for stream...</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Commands</h2>
+          <p class="hint" id="command-hint">START_VIDEO, STOP_VIDEO, GET_STATUS, LOGOUT</p>
+        </div>
+        <pre id="console-log" class="console"></pre>
+        <form id="command-form">
+          <input id="command-input" autocomplete="off" spellcheck="false" placeholder="command" />
+          <button type="submit">Send</button>
+        </form>
+        <p id="status-banner" class="banner" hidden></p>
+      </div>
+    </div>
+
+    <script src="/js/mpegts.js"></script>
+    <script src="/app.js"></script>
+  </body>
+</html>

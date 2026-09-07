@@ -1,0 +1,231 @@
+* {
+  box-sizing: border-box;
+}
+
+/* display:grid on #login-view beats [hidden] otherwise */
+[hidden] {
+  display: none !important;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  color: #222;
+  background: #dde1e6;
+}
+
+h1 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: normal;
+}
+
+h2 {
+  margin: 0;
+  font-size: 15px;
+}
+
+a {
+  color: #06c;
+}
+
+code {
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 0.92em;
+  background: #eee;
+  padding: 1px 4px;
+}
+
+/* login */
+
+#login-view {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.login-box {
+  width: 320px;
+  padding: 20px 22px 16px;
+  background: #fff;
+  border: 1px solid #999;
+}
+
+.login-box .lede {
+  margin: 8px 0 16px;
+  color: #555;
+}
+
+#login-form label {
+  display: block;
+  margin-top: 8px;
+  font-size: 12px;
+  color: #555;
+}
+
+#login-form input,
+#command-form input {
+  width: 100%;
+  margin-top: 3px;
+  padding: 7px 8px;
+  border: 1px solid #999;
+  font: inherit;
+}
+
+button {
+  margin-top: 12px;
+  padding: 7px 14px;
+  font: inherit;
+  cursor: pointer;
+}
+
+.error {
+  margin: 10px 0 0;
+  color: #a00;
+}
+
+/* main */
+
+#main-view {
+  width: min(920px, calc(100% - 28px));
+  margin: 0 auto;
+  padding: 18px 0 36px;
+}
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #999;
+}
+
+.statusline {
+  margin: 6px 0 0;
+  color: #444;
+  font-size: 13px;
+}
+
+.statusline > span {
+  margin-right: 12px;
+}
+
+.chip.ok { color: #060; }
+.chip.warn { color: #860; }
+.chip.bad { color: #a00; }
+
+.docs-link {
+  align-self: flex-start;
+  margin-top: 2px;
+  padding: 4px 8px;
+  border: 1px solid #999;
+  background: #f3f3f3;
+  color: #222;
+  text-decoration: none;
+  font-size: 13px;
+}
+
+.panel {
+  margin-bottom: 14px;
+  padding: 12px;
+  background: #f7f7f7;
+  border: 1px solid #999;
+}
+
+.panel-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+  align-items: baseline;
+}
+
+.meta,
+.hint,
+#player-state {
+  color: #666;
+  font-size: 12px;
+}
+
+.hint {
+  margin: 0;
+}
+
+.stage {
+  position: relative;
+  background: #000;
+  border: 1px solid #666;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+}
+
+video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #000;
+}
+
+.overlay {
+  position: absolute;
+  left: 8px;
+  bottom: 8px;
+  padding: 3px 6px;
+  background: rgba(0, 0, 0, 0.75);
+  color: #ccc;
+  font-size: 12px;
+}
+
+.console {
+  margin: 0 0 8px;
+  padding: 10px;
+  height: 190px;
+  overflow: auto;
+  border: 1px solid #666;
+  background: #1e1e1e;
+  color: #ddd;
+  font: 12px Consolas, "Courier New", monospace;
+  white-space: pre-wrap;
+}
+
+#command-form {
+  display: flex;
+  gap: 8px;
+}
+
+#command-form input {
+  flex: 1;
+  margin-top: 0;
+}
+
+#command-form button {
+  margin-top: 0;
+}
+
+.banner {
+  margin: 8px 0 0;
+  color: #860;
+}
+
+.banner.bad {
+  color: #a00;
+}
+
+@media (max-width: 640px) {
+  #main-view {
+    width: calc(100% - 20px);
+  }
+
+  .panel-head {
+    flex-direction: column;
+  }
+
+  #command-form {
+    flex-direction: column;
+  }
+}

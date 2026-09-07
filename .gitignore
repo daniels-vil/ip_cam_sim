@@ -1,0 +1,16 @@
+node_modules/
+build/
+commands.log
+*.log
+.DS_Store
+.env
+mediamtx/mediamtx
+mediamtx/mediamtx.exe
+mediamtx/*.tar.gz
+mediamtx/*.zip
+mediamtx/tmp/
+mediamtx/LICENSE
+mediamtx/README.md
+mediamtx/auto.key
+mediamtx/auto.crt
+mediamtx/mediamtx.log
